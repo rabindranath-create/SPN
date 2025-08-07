@@ -619,7 +619,7 @@ for(jj in c(1, 2, 3)){
 
 
 WCSPP_Node_risk_C <- function(obs_info){
-  W <- 6
+  W <- jj
   x <- 100; y <- 50; r <- 5
   # create graph
   vertice_list <- Lattice_Vertices(x,y)
