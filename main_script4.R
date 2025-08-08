@@ -711,7 +711,8 @@ WCSPP_Node_risk_15 <- function(obs_info){
   return(output_final)
 }
 library(parallel)
-cl <- makeCluster(20)
+n_cores <- detectCores()
+cl <- makeCluster(n_cores)
 clusterExport (cl, varlist = c("Graph_Discretized", "Intersect_Obs","Update_graph_intersect",
                                "Index_Coordinates","Dist_Euclidean","Lattice_Vertices",
                                "Simple_Node_Eliminate_modified2","WCSPP_Initial_modified"))
