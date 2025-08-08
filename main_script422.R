@@ -735,7 +735,7 @@ clusterEvalQ(cl, {
 
 
 result_WCSPP_risk_15 <- matrix(NA,ncol=7,nrow=100)
-write.csv(result_WCSPP_risk_15, "result_WCSPP_risk_15_80_3.csv")
+write.csv(result_WCSPP_risk_15, file = file.path(output_dir, "result_WCSPP_risk_15_80_3.csv"))
 for (i in 1:10){
   obs_info_all_use <- obs_info_all[(10*(i-1)+1):(10*i)]
   result <- parLapply(cl,obs_info_all_use,WCSPP_Node_risk_15)
@@ -747,7 +747,7 @@ for (i in 1:10){
     result_WCSPP_risk_15[10*(i-1)+j,5] <- result[[j]]$LU_diff[2]
     result_WCSPP_risk_15[10*(i-1)+j,6] <- result[[j]]$LU_diff[3]
     result_WCSPP_risk_15[10*(i-1)+j,7] <- result[[j]]$LU_diff[4]
-    write.csv(result_WCSPP_risk_15, "result_WCSPP_risk_15_80_3.csv")
+    write.csv(result_WCSPP_risk_15, file = file.path(output_dir, "result_WCSPP_risk_15_80_3.csv"))
   }
 }
 

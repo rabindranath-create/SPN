@@ -582,7 +582,7 @@ for(i in 1:100){
 
 ####  RD risk function ####
 result_WCSPP_RD <- matrix(NA,ncol=7,nrow=100)
-write.csv(result_WCSPP_RD,"result_WCSPP_RD_80_3.csv")
+write.csv(result_WCSPP_RD, file = file.path(output_dir, "result_WCSPP_RD_80_3.csv"))
 Update_graph_intersect<-function(g,x,y,circle_info,r){
   #read circle center x,y coordinate c-cost,p-prabability,True or False Obstacles
   #circles=read.csv("example1.csv",header=FALSE)
@@ -748,7 +748,7 @@ for (i in 1:10){
     result_WCSPP_RD[10*(i-1)+j,5] <- result[[j]]$LU_diff[2]
     result_WCSPP_RD[10*(i-1)+j,6] <- result[[j]]$LU_diff[3]
     result_WCSPP_RD[10*(i-1)+j,7] <- result[[j]]$LU_diff[4]
-    write.csv(result_WCSPP_RD,"result_WCSPP_RD_80_3.csv")
+    write.csv(result_WCSPP_RD, file = file.path(output_dir, "result_WCSPP_RD_80_3.csv"))
   }
 }
 
