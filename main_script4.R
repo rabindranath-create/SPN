@@ -556,11 +556,31 @@ Simple_Node_Eliminate_modified2 <- function(G, s, t, W){
 }
 
 
+library(parallel)
+n_cores <- detectCores()
+cl <- makeCluster(n_cores)
+clusterExport (cl, varlist = c("Graph_Discretized", "Intersect_Obs","Update_graph_intersect",
+                               "Index_Coordinates","Dist_Euclidean","Lattice_Vertices",
+                               "Simple_Node_Eliminate_modified2","WCSPP_Initial_modified"))
+clusterEvalQ(cl, {
+  library(igraph)
+  library(spatstat)
+  library(spatial)
+})
+
+
 for(kk in c(20)){
 
 
 # Generate Obstacle information
 obs_info_all1 <- read.csv( paste0('obs_info_all_', kk, '.csv'))
+
+obs_info_all1[, "cost"] <- 1
+for(i in 1:99){
+  obs_info_all1[, paste0("cost.", i)] <- 1
+}
+
+
 obs_info_all <- list()
 for(i in 1:100){
   obs_info_all[[i]] <- obs_info_all1[(5*(i-1)+1):(5*(i-1)+5)]
@@ -710,19 +730,9 @@ WCSPP_Node_risk_15 <- function(obs_info){
   }
   return(output_final)
 }
-library(parallel)
-n_cores <- detectCores()
-cl <- makeCluster(n_cores)
-clusterExport (cl, varlist = c("Graph_Discretized", "Intersect_Obs","Update_graph_intersect",
-                               "Index_Coordinates","Dist_Euclidean","Lattice_Vertices",
-                               "Simple_Node_Eliminate_modified2","WCSPP_Initial_modified"))
-clusterEvalQ(cl, {
-  library(igraph)
-  library(spatstat)
-  library(spatial)
-})
+
 result_WCSPP_risk_15 <- matrix(NA,ncol=7,nrow=100)
-write.csv(result_WCSPP_risk_15,"result_WCSPP_risk_15_", kk, "_", jj, ".csv")
+write.csv(result_WCSPP_risk_15, paste0("result_WCSPP_risk_15_", kk, "_", jj, ".csv"))
 for (i in 1:10){
   obs_info_all_use <- obs_info_all[(10*(i-1)+1):(10*i)]
   result <- parLapply(cl,obs_info_all_use,WCSPP_Node_risk_15)
@@ -734,9 +744,10 @@ for (i in 1:10){
     result_WCSPP_risk_15[10*(i-1)+j,5] <- result[[j]]$LU_diff[2]
     result_WCSPP_risk_15[10*(i-1)+j,6] <- result[[j]]$LU_diff[3]
     result_WCSPP_risk_15[10*(i-1)+j,7] <- result[[j]]$LU_diff[4]
-    write.csv(result_WCSPP_risk_15,"result_WCSPP_risk_15_", kk, "_", jj, ".csv")
+    write.csv(result_WCSPP_risk_15, paste0("result_WCSPP_risk_15_", kk, "_", jj, ".csv"))
   }
 }
+
+}
+}
 stopCluster(cl)
-}
-}

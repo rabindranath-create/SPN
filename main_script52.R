@@ -555,6 +555,13 @@ Simple_Node_Eliminate_modified2 <- function(G, s, t, W){
 for(kk in c(80)){
 
 obs_info_all1 <- read.csv(paste0('obs_info_all_', kk, '.csv'))
+
+obs_info_all1[, "cost"] <- 1
+for(i in 1:99){
+  obs_info_all1[, paste0("cost.", i)] <- 1
+}
+
+
 obs_info_all <- list()
 for(i in 1:100){
   obs_info_all[[i]] <- obs_info_all1[(5*(i-1)+1):(5*(i-1)+5)]
@@ -588,7 +595,7 @@ Update_graph_intersect<-function(g,x,y,circle_info,r){
   return(output)
 }
 
-for( jj in c(1)){
+jj <- 1
 
 WCSPP_Node_risk_30 <- function(obs_info){
   W <- jj
@@ -734,5 +741,5 @@ for (i in 1:10){
 }
 stopCluster(cl)
 
-}
+
 }
