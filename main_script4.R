@@ -558,11 +558,10 @@ Simple_Node_Eliminate_modified2 <- function(G, s, t, W){
 
 
 
-kk <- 20 
-jj <- 1
+
 
 # Generate Obstacle information
-obs_info_all1 <- read.csv( paste0('obs_info_all_', kk, '.csv'))
+obs_info_all1 <- read.csv( 'obs_info_all_20.csv')
 
 obs_info_all1[, "cost"] <- 1
 for(i in 1:99){
@@ -606,7 +605,7 @@ Update_graph_intersect<-function(g,x,y,circle_info,r){
 
 
 WCSPP_Node_risk_15 <- function(obs_info){
-  W <- jj
+  W <- 1
   x <- 100; y <- 50; r <- 5
   # create graph
   vertice_list <- Lattice_Vertices(x,y)
@@ -738,7 +737,7 @@ clusterEvalQ(cl, {
 
 
 result_WCSPP_risk_15 <- matrix(NA,ncol=7,nrow=100)
-write.csv(result_WCSPP_risk_15, paste0("result_WCSPP_risk_15_", kk, "_", jj, ".csv"))
+write.csv(result_WCSPP_risk_15, "result_WCSPP_risk_15_20_1.csv")
 for (i in 1:10){
   obs_info_all_use <- obs_info_all[(10*(i-1)+1):(10*i)]
   result <- parLapply(cl,obs_info_all_use,WCSPP_Node_risk_15)
@@ -750,7 +749,7 @@ for (i in 1:10){
     result_WCSPP_risk_15[10*(i-1)+j,5] <- result[[j]]$LU_diff[2]
     result_WCSPP_risk_15[10*(i-1)+j,6] <- result[[j]]$LU_diff[3]
     result_WCSPP_risk_15[10*(i-1)+j,7] <- result[[j]]$LU_diff[4]
-    write.csv(result_WCSPP_risk_15, paste0("result_WCSPP_risk_15_", kk, "_", jj, ".csv"))
+    write.csv(result_WCSPP_risk_15, "result_WCSPP_risk_15_20_1.csv")
   }
 }
 
@@ -761,11 +760,10 @@ stopCluster(cl)
 
 
 
-kk <- 20 
-jj <- 2
+
 
 # Generate Obstacle information
-obs_info_all1 <- read.csv( paste0('obs_info_all_', kk, '.csv'))
+obs_info_all1 <- read.csv( 'obs_info_all_20.csv')
 
 obs_info_all1[, "cost"] <- 1
 for(i in 1:99){
@@ -809,7 +807,7 @@ Update_graph_intersect<-function(g,x,y,circle_info,r){
 
 
 WCSPP_Node_risk_15 <- function(obs_info){
-  W <- jj
+  W <- 2
   x <- 100; y <- 50; r <- 5
   # create graph
   vertice_list <- Lattice_Vertices(x,y)
@@ -941,7 +939,7 @@ clusterEvalQ(cl, {
 
 
 result_WCSPP_risk_15 <- matrix(NA,ncol=7,nrow=100)
-write.csv(result_WCSPP_risk_15, paste0("result_WCSPP_risk_15_", kk, "_", jj, ".csv"))
+write.csv(result_WCSPP_risk_15, "result_WCSPP_risk_15_20_2.csv")
 for (i in 1:10){
   obs_info_all_use <- obs_info_all[(10*(i-1)+1):(10*i)]
   result <- parLapply(cl,obs_info_all_use,WCSPP_Node_risk_15)
@@ -953,7 +951,7 @@ for (i in 1:10){
     result_WCSPP_risk_15[10*(i-1)+j,5] <- result[[j]]$LU_diff[2]
     result_WCSPP_risk_15[10*(i-1)+j,6] <- result[[j]]$LU_diff[3]
     result_WCSPP_risk_15[10*(i-1)+j,7] <- result[[j]]$LU_diff[4]
-    write.csv(result_WCSPP_risk_15, paste0("result_WCSPP_risk_15_", kk, "_", jj, ".csv"))
+    write.csv(result_WCSPP_risk_15, "result_WCSPP_risk_15_20_2.csv")
   }
 }
 
@@ -962,11 +960,10 @@ stopCluster(cl)
 
 
 
-kk <- 20 
-jj <- 3
+
 
 # Generate Obstacle information
-obs_info_all1 <- read.csv( paste0('obs_info_all_', kk, '.csv'))
+obs_info_all1 <- read.csv('obs_info_all_20.csv')
 
 obs_info_all1[, "cost"] <- 1
 for(i in 1:99){
@@ -1010,7 +1007,7 @@ Update_graph_intersect<-function(g,x,y,circle_info,r){
 
 
 WCSPP_Node_risk_15 <- function(obs_info){
-  W <- jj
+  W <- 3
   x <- 100; y <- 50; r <- 5
   # create graph
   vertice_list <- Lattice_Vertices(x,y)
@@ -1142,7 +1139,7 @@ clusterEvalQ(cl, {
 
 
 result_WCSPP_risk_15 <- matrix(NA,ncol=7,nrow=100)
-write.csv(result_WCSPP_risk_15, paste0("result_WCSPP_risk_15_", kk, "_", jj, ".csv"))
+write.csv(result_WCSPP_risk_15, "result_WCSPP_risk_15_20_3.csv")
 for (i in 1:10){
   obs_info_all_use <- obs_info_all[(10*(i-1)+1):(10*i)]
   result <- parLapply(cl,obs_info_all_use,WCSPP_Node_risk_15)
@@ -1154,7 +1151,7 @@ for (i in 1:10){
     result_WCSPP_risk_15[10*(i-1)+j,5] <- result[[j]]$LU_diff[2]
     result_WCSPP_risk_15[10*(i-1)+j,6] <- result[[j]]$LU_diff[3]
     result_WCSPP_risk_15[10*(i-1)+j,7] <- result[[j]]$LU_diff[4]
-    write.csv(result_WCSPP_risk_15, paste0("result_WCSPP_risk_15_", kk, "_", jj, ".csv"))
+    write.csv(result_WCSPP_risk_15, "result_WCSPP_risk_15_20_3.csv")
   }
 }
 
