@@ -552,7 +552,11 @@ Simple_Node_Eliminate_modified2 <- function(G, s, t, W){
 # Generate Obstacle information
 
 
-for(kk in c(80)){
+
+
+kk <- 80
+jj <- 3
+
 
 obs_info_all1 <- read.csv(paste0('obs_info_all_', kk, '.csv'))
 
@@ -560,6 +564,7 @@ obs_info_all1[, "cost"] <- 1
 for(i in 1:99){
   obs_info_all1[, paste0("cost.", i)] <- 1
 }
+
 
 obs_info_all <- list()
 for(i in 1:100){
@@ -594,7 +599,7 @@ Update_graph_intersect<-function(g,x,y,circle_info,r){
   return(output)
 }
 
-jj <- 3
+
 
 WCSPP_Node_risk_30 <- function(obs_info){
   W <- jj
@@ -710,6 +715,7 @@ WCSPP_Node_risk_30 <- function(obs_info){
   }
   return(output_final)
 }
+
 library(parallel)
 n_cores <- detectCores()
 cl <- makeCluster(n_cores)
@@ -721,6 +727,7 @@ clusterEvalQ(cl, {
   library(spatstat)
   library(spatial)
 })
+
 
 result_WCSPP_risk_30 <- matrix(NA,ncol=7,nrow=100)
 write.csv(result_WCSPP_risk_30, paste0("result_WCSPP_risk_30_", kk, "_", jj, ".csv"))
@@ -738,7 +745,5 @@ for (i in 1:10){
     write.csv(result_WCSPP_risk_30, paste0("result_WCSPP_risk_30_", kk, "_", jj, ".csv"))
   }
 }
+
 stopCluster(cl)
-
-
-}
