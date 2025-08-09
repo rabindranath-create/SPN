@@ -1,4 +1,5 @@
 #!/usr/bin/env Rscript
+
 cat("Working directory:", getwd(), "\n")
 
 # Set up and confirm output folder
@@ -9,7 +10,6 @@ cat("Created directory:", output_dir, "\n")
 # Confirm contents before saving
 print("Files in 'outputs' before saving:")
 print(list.files("outputs", recursive = TRUE))
-
 
 
 
@@ -561,26 +561,15 @@ Simple_Node_Eliminate_modified2 <- function(G, s, t, W){
   }
 }
 
-
-
-
-
-
-for(kk in c(80)){
-
-
-
-
 # Generate Obstacle information
-obs_info_all1 <- read.csv(paste0('obs_info_all_', kk, '.csv'))
-
+obs_info_all1 <- read.csv('obs_info_all_80.csv')
 
 obs_info_all1[, "cost"] <- 1
 for(i in 1:99){
   obs_info_all1[, paste0("cost.", i)] <- 1
 }
 
-  
+
 obs_info_all <- list()
 for(i in 1:100){
   obs_info_all[[i]] <- obs_info_all1[(5*(i-1)+1):(5*(i-1)+5)]
@@ -613,13 +602,8 @@ Update_graph_intersect<-function(g,x,y,circle_info,r){
   output <- list(G_info=updateg, Int_info=int_info)
   return(output)
 }
-
-
-for(jj in c(1, 2, 3)){
-
-
 WCSPP_Node_risk_C <- function(obs_info){
-  W <- jj
+  W <- 1
   x <- 100; y <- 50; r <- 5
   # create graph
   vertice_list <- Lattice_Vertices(x,y)
@@ -735,7 +719,6 @@ WCSPP_Node_risk_C <- function(obs_info){
 
 ##
 library(parallel)
-
 n_cores <- detectCores()
 cl <- makeCluster(n_cores)
 clusterExport (cl, varlist = c("Graph_Discretized", "Intersect_Obs","Update_graph_intersect",
@@ -747,8 +730,10 @@ clusterEvalQ(cl, {
   library(spatial)
 })
 
+
+
 result_WCSPP_risk_C <- matrix(NA,ncol=7,nrow=100)
-write.csv(result_WCSPP_risk_C, paste0("result_WCSPP_risk_C_", kk, "_", jj, ".csv"))
+write.csv(result_WCSPP_risk_C, file = file.path(output_dir, "result_WCSPP_risk_C_80_1.csv"))
 for (i in 1:10){
   obs_info_all_use <- obs_info_all[(10*(i-1)+1):(10*i)]
   result <- parLapply(cl,obs_info_all_use,WCSPP_Node_risk_C)
@@ -760,10 +745,12 @@ for (i in 1:10){
     result_WCSPP_risk_C[10*(i-1)+j,5] <- result[[j]]$LU_diff[2]
     result_WCSPP_risk_C[10*(i-1)+j,6] <- result[[j]]$LU_diff[3]
     result_WCSPP_risk_C[10*(i-1)+j,7] <- result[[j]]$LU_diff[4]
-    write.csv(result_WCSPP_risk_C, paste0("result_WCSPP_risk_C_", kk, "_", jj, ".csv"))
+    write.csv(result_WCSPP_risk_C, file = file.path(output_dir, "result_WCSPP_risk_C_80_1.csv"))
   }
 }
 stopCluster(cl)
 
-}
-}
+
+
+
+
