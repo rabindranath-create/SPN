@@ -556,6 +556,7 @@ Simple_Node_Eliminate_modified2 <- function(G, s, t, W){
 
 
 
+
 obs_info_all1 <- read.csv('obs_info_all_80.csv')
 
 obs_info_all1[, "cost"] <- 1
@@ -745,9 +746,6 @@ for (i in 1:10){
 }
 
 stopCluster(cl)
-
-
-
 
 
 
