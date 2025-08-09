@@ -2,7 +2,7 @@
 cat("Working directory:", getwd(), "\n")
 
 # Set up and confirm output folder
-output_dir <- file.path(getwd(), "outputs/script6")
+output_dir <- file.path(getwd(), "outputs/script600")
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 cat("Created directory:", output_dir, "\n")
 
@@ -562,6 +562,9 @@ Simple_Node_Eliminate_modified2 <- function(G, s, t, W){
 
 
 
+
+
+
 obs_info_all1 <- read.csv('obs_info_all_20.csv')
 
 obs_info_all1[, "cost"] <- 1
@@ -578,8 +581,7 @@ for(i in 1:100){
 
 ####  RD risk function ####
 result_WCSPP_RD <- matrix(NA,ncol=7,nrow=100)
-write.csv(result_WCSPP_RD, file = file.path(output_dir, "result_WCSPP_RD_20_1.csv"))
-#write.csv(result_WCSPP_RD,"result_WCSPP_RD_20_1.csv")
+write.csv(result_WCSPP_RD, file = file.path(output_dir, "result_WCSPP_RD_20_3.csv"))
 Update_graph_intersect<-function(g,x,y,circle_info,r){
   #read circle center x,y coordinate c-cost,p-prabability,True or False Obstacles
   #circles=read.csv("example1.csv",header=FALSE)
@@ -605,8 +607,9 @@ Update_graph_intersect<-function(g,x,y,circle_info,r){
   output <- list(G_info=updateg, Int_info=int_info)
   return(output)
 }
+
 WCSPP_Node_RD <- function(obs_info){
-  W <- 1
+  W <- 3
   x <- 100; y <- 50; r <- 5
   # create graph
   vertice_list <- Lattice_Vertices(x,y)
@@ -744,8 +747,7 @@ for (i in 1:10){
     result_WCSPP_RD[10*(i-1)+j,5] <- result[[j]]$LU_diff[2]
     result_WCSPP_RD[10*(i-1)+j,6] <- result[[j]]$LU_diff[3]
     result_WCSPP_RD[10*(i-1)+j,7] <- result[[j]]$LU_diff[4]
-    write.csv(result_WCSPP_RD, file = file.path(output_dir, "result_WCSPP_RD_20_1.csv"))
+    write.csv(result_WCSPP_RD, file = file.path(output_dir, "result_WCSPP_RD_20_3.csv"))
   }
 }
-
 
