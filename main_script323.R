@@ -3,7 +3,7 @@
 cat("Working directory:", getwd(), "\n")
 
 # Set up and confirm output folder
-output_dir <- file.path(getwd(), "outputs/script322")
+output_dir <- file.path(getwd(), "outputs/script323")
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 cat("Created directory:", output_dir, "\n")
 
@@ -737,8 +737,8 @@ clusterEvalQ(cl, {
 
 
 result_WCSPP_risk_C <- matrix(NA,ncol=7,nrow=100)
-write.csv(result_WCSPP_risk_C, file = file.path(output_dir, "result_WCSPP_risk_C_80_3.csv"))
-for (i in 1:5){
+write.csv(result_WCSPP_risk_C, file = file.path(output_dir, "result_WCSPP_risk_C_80_31.csv"))
+for (i in 6:10){
   obs_info_all_use <- obs_info_all[(10*(i-1)+1):(10*i)]
   result <- parLapply(cl,obs_info_all_use,WCSPP_Node_risk_C)
   for (j in 1:10){
@@ -749,7 +749,7 @@ for (i in 1:5){
     result_WCSPP_risk_C[10*(i-1)+j,5] <- result[[j]]$LU_diff[2]
     result_WCSPP_risk_C[10*(i-1)+j,6] <- result[[j]]$LU_diff[3]
     result_WCSPP_risk_C[10*(i-1)+j,7] <- result[[j]]$LU_diff[4]
-    write.csv(result_WCSPP_risk_C, file = file.path(output_dir, "result_WCSPP_risk_C_80_3.csv"))
+    write.csv(result_WCSPP_risk_C, file = file.path(output_dir, "result_WCSPP_risk_C_80_31.csv"))
   }
 }
 stopCluster(cl)
