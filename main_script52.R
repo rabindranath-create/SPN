@@ -715,24 +715,14 @@ WCSPP_Node_risk_30 <- function(obs_info){
   return(output_final)
 }
 
-library(parallel)
-n_cores <- detectCores()
-cl <- makeCluster(n_cores)
-clusterExport (cl, varlist = c("Graph_Discretized", "Intersect_Obs","Update_graph_intersect",
-                               "Index_Coordinates","Dist_Euclidean","Lattice_Vertices",
-                               "Simple_Node_Eliminate_modified2","WCSPP_Initial_modified"))
-clusterEvalQ(cl, {
-  library(igraph)
-  library(spatstat)
-  library(spatial)
-})
+
 
 
 result_WCSPP_risk_30 <- matrix(NA,ncol=7,nrow=100)
 write.csv(result_WCSPP_risk_30, file = file.path(output_dir, "result_WCSPP_risk_30_80_1.csv"))
-for (i in 1:10){
+for (i in 1:1){
   obs_info_all_use <- obs_info_all[(10*(i-1)+1):(10*i)]
-  result <- parLapply(cl,obs_info_all_use,WCSPP_Node_risk_30)
+  result <- WCSPP_Node_risk_30(obs_info_all_use)
   for (j in 1:10){
     result_WCSPP_risk_30[10*(i-1)+j,1] <- result[[j]]$Length_total
     result_WCSPP_risk_30[10*(i-1)+j,2] <- result[[j]]$Cost_total
@@ -744,8 +734,6 @@ for (i in 1:10){
     write.csv(result_WCSPP_risk_30, file = file.path(output_dir, "result_WCSPP_risk_30_80_1.csv"))
   }
 }
-
-stopCluster(cl)
 
 
 
