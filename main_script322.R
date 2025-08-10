@@ -251,7 +251,7 @@ WCSPP_Initial_modified <- function(G, s, t, W){
           }
           # remove vertices
           if(round(C_0_fb[k],5)>round(Upper,5)){
-            prink(k)
+            print(k)
             V_delete <- c(V_delete,as.numeric(vertex.attributes(G_new)$name[k]))
             E_delete <- rbind(E_delete,
                               df_edge[which(df_edge$from==as.numeric(vertex.attributes(G_new)$name[k])|
