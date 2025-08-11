@@ -600,7 +600,7 @@ Update_graph_intersect<-function(g,x,y,circle_info,r){
 
 
 WCSPP_Node_risk_30 <- function(obs_info){
-  W <- 3
+  W <- 1
   x <- 100; y <- 50; r <- 5
   # create graph
   vertice_list <- Lattice_Vertices(x,y)
@@ -720,7 +720,7 @@ WCSPP_Node_risk_30 <- function(obs_info){
 
 result_WCSPP_risk_30 <- matrix(NA,ncol=7,nrow=100)
 write.csv(result_WCSPP_risk_30, file = file.path(output_dir, paste0("result_WCSPP_risk_", alpha, "_80_1.csv")))
-for (i in 1:50){
+for (i in 51:100){
     obs_info_all_use <- obs_info_all[[i]]
     result <- WCSPP_Node_risk_30(obs_info_all_use)
     result_WCSPP_risk_30[i, 1] <- result$Length_total
