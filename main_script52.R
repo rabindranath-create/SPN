@@ -717,35 +717,6 @@ WCSPP_Node_risk_30 <- function(obs_info){
 
 
 
-library(parallel)
-n_cores <- detectCores()
-cl <- makeCluster(n_cores)
-clusterExport (cl, varlist = c("Graph_Discretized", "Intersect_Obs","Update_graph_intersect",
-                               "Index_Coordinates","Dist_Euclidean","Lattice_Vertices",
-                               "Simple_Node_Eliminate_modified2","WCSPP_Initial_modified"))
-clusterEvalQ(cl, {
-  library(igraph)
-  library(spatstat)
-  library(spatial)
-})
-
-
-
-
-
-i <- 2
-obs_dfd <- obs_info_all[(10*(i-1)+1):(10*i)]
-obs_info_all_use <- obs_info_all[[i]]
-
-i <- 1
-result <- WCSPP_Node_risk_30(obs_info_all_use)
-result_WCSPP_risk_30[i, 1] <- result$Length_total
-result_WCSPP_risk_30[i,2] <- result$Cost_total
-result_WCSPP_risk_30[i,3] <- length(result$Disambiguate_state)
-result_WCSPP_risk_30[i,4] <- result$LU_diff[1]
-result_WCSPP_risk_30[i,5] <- result$LU_diff[2]
-result_WCSPP_risk_30[i,6] <- result$LU_diff[3]
-result_WCSPP_risk_30[i,7] <- result$LU_diff[4]
 
 result_WCSPP_risk_30 <- matrix(NA,ncol=7,nrow=100)
 write.csv(result_WCSPP_risk_30, file = file.path(output_dir, "result_WCSPP_risk_30_80_1.csv"))
@@ -762,8 +733,6 @@ for (i in 1:10){
     write.csv(result_WCSPP_risk_30, file = file.path(output_dir, "result_WCSPP_risk_30_80_1.csv"))
   }
 
-
-stopCluster(cl)
 
 
 
