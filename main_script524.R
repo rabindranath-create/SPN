@@ -2,7 +2,7 @@
 #!/usr/bin/env Rscript
 cat("Working directory:", getwd(), "\n")
 # Set up and confirm output folder
-output_dir <- file.path(getwd(), "outputs/script522")
+output_dir <- file.path(getwd(), "outputs/script524")
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 cat("Created directory:", output_dir, "\n")
 
@@ -720,7 +720,7 @@ WCSPP_Node_risk_30 <- function(obs_info){
 
 result_WCSPP_risk_30 <- matrix(NA,ncol=7,nrow=100)
 write.csv(result_WCSPP_risk_30, file = file.path(output_dir, "result_WCSPP_risk_30_80_1.csv"))
-for (i in 21:30){
+for (i in 41:50){
     obs_info_all_use <- obs_info_all[[i]]
     result <- WCSPP_Node_risk_30(obs_info_all_use)
     result_WCSPP_risk_30[i, 1] <- result$Length_total

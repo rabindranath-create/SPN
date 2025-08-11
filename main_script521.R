@@ -1,7 +1,6 @@
 #!/usr/bin/env Rscript
 #!/usr/bin/env Rscript
 cat("Working directory:", getwd(), "\n")
-
 # Set up and confirm output folder
 output_dir <- file.path(getwd(), "outputs/script521")
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
@@ -402,7 +401,7 @@ Simple_Node_Eliminate_modified2 <- function(G, s, t, W){
       if(is.null(index_delete)){
         output_step6 <- round(min(phi_lambda_fb),5)==round(Upper,5)
       } else{
-        output_step6 <- round(min(phi_lambda_fb[-index_delete]),5)==round(Upper,5)
+        output_step6 <- round(min(phi_lambda_fb[setdiff(seq_along(phi_lambda_fb), index_delete)]),5) == round(Upper,5)
       }
       if(output_step6==T){
         # check if stop with empty graph
@@ -424,7 +423,7 @@ Simple_Node_Eliminate_modified2 <- function(G, s, t, W){
           # optimal multiplier found
           output <- list(Optimal_upper=T, Optimal_multiplier=T, Value_upper=Upper, 
                          Info_path=P_upper, Lambda_pos=lambda_pos, Lambda_neg=lambda_neg,
-                         Lambda_new=lambda_new, Graph=G_update,Step=6, Value_lower=min(phi_lambda_fb[-index_delete]))
+                         Lambda_new=lambda_new, Graph=G_update,Step=6, Value_lower=min(phi_lambda_fb[setdiff(seq_along(phi_lambda_fb), index_delete)]))
         } else if(phi_prime_lambda<0){
           # -------------- STEP 7 --------------- #
           # continue to search for new lambda  
@@ -671,7 +670,7 @@ WCSPP_Node_risk_30 <- function(obs_info){
         # determine which obstacle
         obs_ind_temp <- which(Int_info[edge_ind_temp,]==1)
         if (length(obs_ind_temp)==1){
-          W <- W-obs_info$cost[obs_ind_temp]
+          W <- W - obs_info$cost[obs_ind_temp]
           # add cost of disambiguation
           cost_total <- cost_total+obs_info[obs_ind_temp,3]
           if (obs_info$status[obs_ind_temp]==1){
@@ -715,40 +714,24 @@ WCSPP_Node_risk_30 <- function(obs_info){
   return(output_final)
 }
 
-library(parallel)
-n_cores <- detectCores()
-cl <- makeCluster(n_cores)
-clusterExport (cl, varlist = c("Graph_Discretized", "Intersect_Obs","Update_graph_intersect",
-                               "Index_Coordinates","Dist_Euclidean","Lattice_Vertices",
-                               "Simple_Node_Eliminate_modified2","WCSPP_Initial_modified"))
-clusterEvalQ(cl, {
-  library(igraph)
-  library(spatstat)
-  library(spatial)
-})
+
+
 
 
 result_WCSPP_risk_30 <- matrix(NA,ncol=7,nrow=100)
-write.csv(result_WCSPP_risk_30, file = file.path(output_dir, "result_WCSPP_risk_30_80_2.csv"))
-for (i in 1:10){
-  obs_info_all_use <- obs_info_all[(10*(i-1)+1):(10*i)]
-  result <- parLapply(cl,obs_info_all_use,WCSPP_Node_risk_30)
-  for (j in 1:10){
-    result_WCSPP_risk_30[10*(i-1)+j,1] <- result[[j]]$Length_total
-    result_WCSPP_risk_30[10*(i-1)+j,2] <- result[[j]]$Cost_total
-    result_WCSPP_risk_30[10*(i-1)+j,3] <- length(result[[j]]$Disambiguate_state)
-    result_WCSPP_risk_30[10*(i-1)+j,4] <- result[[j]]$LU_diff[1]
-    result_WCSPP_risk_30[10*(i-1)+j,5] <- result[[j]]$LU_diff[2]
-    result_WCSPP_risk_30[10*(i-1)+j,6] <- result[[j]]$LU_diff[3]
-    result_WCSPP_risk_30[10*(i-1)+j,7] <- result[[j]]$LU_diff[4]
-    write.csv(result_WCSPP_risk_30, file = file.path(output_dir, "result_WCSPP_risk_30_80_2.csv"))
+write.csv(result_WCSPP_risk_30, file = file.path(output_dir, "result_WCSPP_risk_30_80_1.csv"))
+for (i in 11:20){
+    obs_info_all_use <- obs_info_all[[i]]
+    result <- WCSPP_Node_risk_30(obs_info_all_use)
+    result_WCSPP_risk_30[i, 1] <- result$Length_total
+    result_WCSPP_risk_30[i,2] <- result$Cost_total
+    result_WCSPP_risk_30[i,3] <- length(result$Disambiguate_state)
+    result_WCSPP_risk_30[i,4] <- result$LU_diff[1]
+    result_WCSPP_risk_30[i,5] <- result$LU_diff[2]
+    result_WCSPP_risk_30[i,6] <- result$LU_diff[3]
+    result_WCSPP_risk_30[i,7] <- result$LU_diff[4]
+    write.csv(result_WCSPP_risk_30, file = file.path(output_dir, "result_WCSPP_risk_30_80_1.csv"))
   }
-}
-
-stopCluster(cl)
-
-
-
 
 
 
