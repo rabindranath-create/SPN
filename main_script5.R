@@ -600,7 +600,7 @@ Update_graph_intersect<-function(g,x,y,circle_info,r){
 
 
 WCSPP_Node_risk_30 <- function(obs_info){
-  W <- 1
+  W <- 2
   x <- 100; y <- 50; r <- 5
   # create graph
   vertice_list <- Lattice_Vertices(x,y)
