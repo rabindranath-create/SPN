@@ -598,14 +598,15 @@ Update_graph_intersect<-function(g,x,y,circle_info,r){
   return(output)
 }
 
-
-
-WCSPP_Node_risk_30 <- function(obs_info){
-  W <- 1
+ W <- 1
   x <- 100; y <- 50; r <- 5
   # create graph
   vertice_list <- Lattice_Vertices(x,y)
   G_original <- Graph_Discretized(x,y)
+
+
+
+WCSPP_Node_risk_30 <- function(obs_info){
   output_Ginfo <- Update_graph_intersect(G_original, x, y, obs_info, r)
   G_ed <- output_Ginfo$G_info
   Int_info <- output_Ginfo$Int_info
@@ -720,20 +721,21 @@ WCSPP_Node_risk_30 <- function(obs_info){
 
 result_WCSPP_risk_30 <- matrix(NA,ncol=7,nrow=100)
 write.csv(result_WCSPP_risk_30, file = file.path(output_dir, "result_WCSPP_risk_30_80_1.csv"))
-for (i in 1:1){
-  obs_info_all_use <- obs_info_all[(10*(i-1)+1):(10*i)]
-  result <- WCSPP_Node_risk_30(obs_info_all_use)
-  for (j in 1:10){
-    result_WCSPP_risk_30[10*(i-1)+j,1] <- result[[j]]$Length_total
-    result_WCSPP_risk_30[10*(i-1)+j,2] <- result[[j]]$Cost_total
-    result_WCSPP_risk_30[10*(i-1)+j,3] <- length(result[[j]]$Disambiguate_state)
-    result_WCSPP_risk_30[10*(i-1)+j,4] <- result[[j]]$LU_diff[1]
-    result_WCSPP_risk_30[10*(i-1)+j,5] <- result[[j]]$LU_diff[2]
-    result_WCSPP_risk_30[10*(i-1)+j,6] <- result[[j]]$LU_diff[3]
-    result_WCSPP_risk_30[10*(i-1)+j,7] <- result[[j]]$LU_diff[4]
+for (i in 1:50){
+    obs_info_all_use <- obs_info_all[[i]]
+    result <- WCSPP_Node_risk_30(obs_info_all_use)
+    result_WCSPP_risk_30[i, 1] <- result$Length_total
+    result_WCSPP_risk_30[i,2] <- result$Cost_total
+    result_WCSPP_risk_30[i,3] <- length(result$Disambiguate_state)
+    result_WCSPP_risk_30[i,4] <- result$LU_diff[1]
+    result_WCSPP_risk_30[i,5] <- result$LU_diff[2]
+    result_WCSPP_risk_30[i,6] <- result$LU_diff[3]
+    result_WCSPP_risk_30[i,7] <- result$LU_diff[4]
     write.csv(result_WCSPP_risk_30, file = file.path(output_dir, "result_WCSPP_risk_30_80_1.csv"))
   }
-}
+
+
+
 
 
 
