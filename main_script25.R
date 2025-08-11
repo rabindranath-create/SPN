@@ -2,7 +2,7 @@
 #!/usr/bin/env Rscript
 cat("Working directory:", getwd(), "\n")
 # Set up and confirm output folder
-output_dir <- file.path(getwd(), "outputs/script31")
+output_dir <- file.path(getwd(), "outputs/script25")
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 cat("Created directory:", output_dir, "\n")
 
@@ -553,7 +553,7 @@ Simple_Node_Eliminate_modified2 <- function(G, s, t, W){
 
 
 
-alpha <- 31
+alpha <- 25
 
 
 obs_info_all1 <- read.csv('obs_info_all_20.csv')
