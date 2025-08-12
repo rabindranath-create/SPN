@@ -556,8 +556,12 @@ Simple_Node_Eliminate_modified2 <- function(G, s, t, W){
 alpha <- 17
 
 
-obs_info_all1 <- read.csv('obs_info_all_80.csv')
+obs_info_all1 <- read.csv('obs_info_all_40.csv')
 
+obs_info_all1[, "cost"] <- 1
+for(i in 1:99){
+  obs_info_all1[, paste0("cost.", i)] <- 1
+}
 
 
 obs_info_all <- list()
@@ -596,7 +600,7 @@ Update_graph_intersect<-function(g,x,y,circle_info,r){
 
 
 WCSPP_Node_risk_30 <- function(obs_info){
-W <- 10
+  W <- 3
   x <- 100; y <- 50; r <- 5
   # create graph
   vertice_list <- Lattice_Vertices(x,y)
@@ -715,8 +719,8 @@ W <- 10
 
 
 result_WCSPP_risk_30 <- matrix(NA,ncol=7,nrow=100)
-write.csv(result_WCSPP_risk_30, file = file.path(output_dir, paste0("result_WCSPP_risk_", alpha, "_80_1.csv")))
-for (i in 51:100){
+write.csv(result_WCSPP_risk_30, file = file.path(output_dir, paste0("result_WCSPP_risk_", alpha, "_40_1.csv")))
+for (i in 1:50){
     obs_info_all_use <- obs_info_all[[i]]
     result <- WCSPP_Node_risk_30(obs_info_all_use)
     result_WCSPP_risk_30[i, 1] <- result$Length_total
@@ -726,7 +730,7 @@ for (i in 51:100){
     result_WCSPP_risk_30[i,5] <- result$LU_diff[2]
     result_WCSPP_risk_30[i,6] <- result$LU_diff[3]
     result_WCSPP_risk_30[i,7] <- result$LU_diff[4]
-    write.csv(result_WCSPP_risk_30, file = file.path(output_dir, paste0("result_WCSPP_risk_", alpha, "_80_1.csv")))
+    write.csv(result_WCSPP_risk_30, file = file.path(output_dir, paste0("result_WCSPP_risk_", alpha, "_40_1.csv")))
   }
 
 
