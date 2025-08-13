@@ -720,7 +720,7 @@ WCSPP_Node_risk_30 <- function(obs_info){
 
 result_WCSPP_risk_30 <- matrix(NA,ncol=7,nrow=100)
 write.csv(result_WCSPP_risk_30, file = file.path(output_dir, paste0("result_WCSPP_risk_", alpha, "_80_1.csv")))
-for (i in 1:50){
+for (i in 1:30){
     obs_info_all_use <- obs_info_all[[i]]
     result <- WCSPP_Node_risk_30(obs_info_all_use)
     result_WCSPP_risk_30[i, 1] <- result$Length_total
