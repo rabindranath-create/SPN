@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 cat("Working directory:", getwd(), "\n")
 # Set up and confirm output folder
-output_dir <- file.path(getwd(), "outputs/script31")
+output_dir <- file.path(getwd(), "outputs/script511")
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 cat("Created directory:", output_dir, "\n")
 
@@ -569,7 +569,7 @@ Simple_Node_Eliminate_modified2 <- function(G, s, t, W){
 }
 
 # import data
-obs_info_all1 <- read.csv('obs_info_all_20.csv')
+obs_info_all1 <- read.csv('obs_info_all_80.csv')
 
 obs_info_all1[, "cost"] <- 1
 for(i in 1:99){
@@ -612,7 +612,7 @@ Update_graph_intersect<-function(g,x,y,circle_info,r){
   return(output)
 }
 WCSPP_benchmark <- function(obs_info){
-  W <- 2
+  W <- 3
   x <- 100; y <- 50; r <- 5
   # create graph
   vertice_list <- Lattice_Vertices(x,y)
@@ -682,7 +682,7 @@ result_benchmark <- matrix(NA, ncol=3, nrow=100)
 
 
 
-write.csv(result_benchmark, file = file.path(output_dir, "result_benchmark_20_2.csv"))
+write.csv(result_benchmark, file = file.path(output_dir, "result_benchmark_80_3.csv"))
 
 for(i in 1:100){
   obs_info_all_use <- obs_info_all[[i]]
@@ -690,7 +690,7 @@ for(i in 1:100){
   result_benchmark[i,1] <- result$Length_total
   result_benchmark[i,2] <- result$Cost_total
   result_benchmark[i,3] <- length(result$Disambiguate_state)
-  write.csv(result_benchmark, file = file.path(output_dir, "result_benchmark_20_2.csv"))
+  write.csv(result_benchmark, file = file.path(output_dir, "result_benchmark_80_3.csv"))
 }
 
 

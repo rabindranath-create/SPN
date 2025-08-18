@@ -1,5 +1,4 @@
 #!/usr/bin/env Rscript
-#!/usr/bin/env Rscript
 cat("Working directory:", getwd(), "\n")
 # Set up and confirm output folder
 output_dir <- file.path(getwd(), "outputs/script41")
@@ -9,6 +8,7 @@ cat("Created directory:", output_dir, "\n")
 # Confirm contents before saving
 print("Files in 'outputs' before saving:")
 print(list.files("outputs", recursive = TRUE))
+
 
 
 
@@ -29,13 +29,13 @@ Graph_Discretized<-function(x,y){
       
       A[1+i+j*(x+1),i+j*(x+1)]<-1 #left
       A[1+i+j*(x+1),2+i+j*(x+1)]<-1 #right
-      A[1+i+j*(x+1),1+i+(j-1)*(x+1)]<-1 #down
-      A[1+i+j*(x+1),1+i+(j+1)*(x+1)]<-1 #up
+      A[1+i+j*(x+1),1+i+(j-1)*(x+1)]<-1  #down
+      A[1+i+j*(x+1),1+i+(j+1)*(x+1)]<-1  #up
       
-      A[1+i+j*(x+1),i+(j+1)*(x+1)]<-sqrt(2) #left up corner
-      A[1+i+j*(x+1),2+i+(j+1)*(x+1)]<-sqrt(2) #right up corner
-      A[1+i+j*(x+1),i+(j-1)*(x+1)]<-sqrt(2) #left down corner
-      A[1+i+j*(x+1),2+i+(j-1)*(x+1)]<-sqrt(2) #right down corner
+      A[1+i+j*(x+1),i+(j+1)*(x+1)]<-sqrt(2)  #left up corner
+      A[1+i+j*(x+1),2+i+(j+1)*(x+1)]<-sqrt(2)  #right up corner
+      A[1+i+j*(x+1),i+(j-1)*(x+1)]<-sqrt(2)  #left down corner
+      A[1+i+j*(x+1),2+i+(j-1)*(x+1)]<-sqrt(2)  #right down corner
       
     }#end of inner loop
   }#end of outer loop
@@ -145,6 +145,20 @@ Lattice_Vertices <- function(x,y){
   LatticeCoordinates[,2]<-temp
   temp<-rep(0,0)
   return(LatticeCoordinates)
+}
+# 6. generate obstacle
+obs_gen <- function(radius,xStart,xEnd,yStart,yEnd,noPoints,noObs,cost){
+  ppregion(xl=xStart, xu=xEnd, yl=yStart, yu=yEnd)
+  mypp <- spatial::Strauss(n=noPoints,0.5,7)
+  ind_true <- sample(1:noPoints,noObs)
+  status <- rep(0,noPoints)
+  status[ind_true] <- 1
+  prob1 <- rbeta(noObs,6,2)
+  prob <- rbeta(noPoints,2,6)
+  prob[ind_true] <- prob1
+  example_obs <- data.frame('x'=mypp$x, 'y'=mypp$y, 'cost'=rep(cost,noPoints), 
+                            'prob'=prob, 'status'=status)
+  return(example_obs)
 }
 # 7. simple node elimination algorithm_modified
 WCSPP_Initial_modified <- function(G, s, t, W){
@@ -401,7 +415,7 @@ Simple_Node_Eliminate_modified2 <- function(G, s, t, W){
       if(is.null(index_delete)){
         output_step6 <- round(min(phi_lambda_fb),5)==round(Upper,5)
       } else{
-        output_step6 <- round(min(phi_lambda_fb[setdiff(seq_along(phi_lambda_fb), index_delete)]),5) == round(Upper,5)
+        output_step6 <- round(min(phi_lambda_fb[-index_delete]),5)==round(Upper,5)
       }
       if(output_step6==T){
         # check if stop with empty graph
@@ -421,9 +435,15 @@ Simple_Node_Eliminate_modified2 <- function(G, s, t, W){
         phi_lambda <- C_lambda+lambda_new*phi_prime_lambda
         if(round(L_new,5)==round(phi_lambda,5)){
           # optimal multiplier found
-          output <- list(Optimal_upper=T, Optimal_multiplier=T, Value_upper=Upper, 
-                         Info_path=P_upper, Lambda_pos=lambda_pos, Lambda_neg=lambda_neg,
-                         Lambda_new=lambda_new, Graph=G_update,Step=6, Value_lower=min(phi_lambda_fb[setdiff(seq_along(phi_lambda_fb), index_delete)]))
+          if (is.null(index_delete)){
+            output <- list(Optimal_upper=T, Optimal_multiplier=T, Value_upper=Upper, 
+                           Info_path=P_upper, Lambda_pos=lambda_pos, Lambda_neg=lambda_neg,
+                           Lambda_new=lambda_new, Graph=G_update,Step=6, Value_lower=min(phi_lambda_fb))
+          } else{
+            output <- list(Optimal_upper=T, Optimal_multiplier=T, Value_upper=Upper, 
+                           Info_path=P_upper, Lambda_pos=lambda_pos, Lambda_neg=lambda_neg,
+                           Lambda_new=lambda_new, Graph=G_update,Step=6, Value_lower=min(phi_lambda_fb[-index_delete]))
+          }
         } else if(phi_prime_lambda<0){
           # -------------- STEP 7 --------------- #
           # continue to search for new lambda  
@@ -548,25 +568,23 @@ Simple_Node_Eliminate_modified2 <- function(G, s, t, W){
   }
 }
 
-# Generate Obstacle information
+# import data
+obs_info_all1 <- read.csv('obs_info_all_40.csv')
 
-
-
-
-alpha <- 41
-
-
-obs_info_all1 <- read.csv('obs_info_all_80.csv')
-
+obs_info_all1[, "cost"] <- 1
+for(i in 1:99){
+  obs_info_all1[, paste0("cost.", i)] <- 1
+}
 
 
 obs_info_all <- list()
 for(i in 1:100){
   obs_info_all[[i]] <- obs_info_all1[(5*(i-1)+1):(5*(i-1)+5)]
   colnames(obs_info_all[[i]]) <- c('x','y','cost','prob','status')
+  obs_info_all[[i]]$prob <- obs_info_all[[i]]$status
 }
 
-# SR risk function - alpha=30
+# Benchmark
 Update_graph_intersect<-function(g,x,y,circle_info,r){
   #read circle center x,y coordinate c-cost,p-prabability,True or False Obstacles
   #circles=read.csv("example1.csv",header=FALSE)
@@ -575,6 +593,7 @@ Update_graph_intersect<-function(g,x,y,circle_info,r){
   colnames(elg) <- c("From","To","Cost")
   elg$Weight <- rep(0,nrow(elg))
   int_info <- matrix(0,ncol=nrow(circle_info),nrow=nrow(elg))
+  prob_mean <- mean(circle_info$prob)
   for(i in 1:n){
     el<-Intersect_Obs(t(circle_info[i,1:2]),r,x,y)
     n1=nrow(el)
@@ -582,7 +601,7 @@ Update_graph_intersect<-function(g,x,y,circle_info,r){
     
     for(j in 1:n1){
       index=which((elg[,1]==el[j,1] & elg[,2]==el[j,2]))
-      elg[index,3] <- elg[index,3]-0.5*alpha*log(1-circle_info[i,4])
+      elg[index,3] <- elg[index,3]+0.5*circle_info[i,3]/(1-circle_info[i,4])
       elg[index,4] <- elg[index,4]+0.5*circle_info$cost[i]
       int_info[index, i] <- 1
     }#inner loop
@@ -592,11 +611,8 @@ Update_graph_intersect<-function(g,x,y,circle_info,r){
   output <- list(G_info=updateg, Int_info=int_info)
   return(output)
 }
-
-
-
-WCSPP_Node_risk_30 <- function(obs_info){
-W <- 10
+WCSPP_benchmark <- function(obs_info){
+  W <- 2
   x <- 100; y <- 50; r <- 5
   # create graph
   vertice_list <- Lattice_Vertices(x,y)
@@ -605,6 +621,7 @@ W <- 10
   G_ed <- output_Ginfo$G_info
   Int_info <- output_Ginfo$Int_info
   df_edge_ed <- get.data.frame(G_ed, what="edges")
+  prob_mean <- mean(obs_info$prob)
   # begin the loop to travel from s to t
   s <- 5101
   t <- 152
@@ -613,122 +630,67 @@ W <- 10
   reach_t <- F
   path_record <- s
   D_record <- c()
+  Obstacle_record <- c()
   LU_diff <- c()
-  while(reach_t!=T){
-    # implement simple node elimination algorithm
-    output <- Simple_Node_Eliminate_modified2(G_ed, s, t, W)
-    if (length(output)==1){
-      output_final <- list(Optimal_found=F)
-      break
-    }
-    if (output$Optimal_upper==T){
-      # if optimal solution found
-      if (output$Step==1){
-        # if minimum cost path is optimal
-        P_optimal <- output$Info_path
-        V_list <- c(as.numeric(attributes(P_optimal$vpath[[1]])$names))
-        LU_diff <- c(LU_diff,(output$Value_upper-output$Value_lower)/output$Value_lower)
-      } else if(output$Step==3){
-        P_optimal <- output$Info_path
-        V_list <- c(as.numeric(attributes(P_optimal$vpath[[1]])$names))
-        LU_diff <- c(LU_diff,(output$Value_upper-output$Value_lower)/output$Value_lower)
-      } else{
-        # optimal found in the SNE process
-        P_optimal <- output$Info_path
-        V_list <- c(as.numeric(attributes(P_optimal$forward$vpath[[1]])$names),as.numeric(attributes(P_optimal$backward$vpath[[1]])$names)[-1])
-        LU_diff <- c(LU_diff,0)
-      }
-      #follow the path until the first disambiguation state
-      for (i in 2:length(V_list)){
-        edge_ind_temp <- which(df_edge_ed$from==min(V_list[(i-1):i])&df_edge_ed$to==max(V_list[(i-1):i]))
-        edge_length <- Dist_Euclidean(as.numeric(vertice_list[V_list[i-1],1:2]),as.numeric(vertice_list[V_list[i],1:2]))
-        if (sum(Int_info[edge_ind_temp,])!=0){
-          D_state <- V_list[i-1]
-          D_record <- c(D_record, D_state)
-          break
-        } else{
-          length_total <- length_total+edge_length
-          path_record <- c(path_record,V_list[i])
-          D_state <- NULL
-        }
-      }
-      if(is.null(D_state)){
-        # if didn't run into any obstacle and reach target
-        reach_t=T
-        output_final <- list(Optimal_found=T,Length_total=length_total,Cost_total=cost_total,
-                             Optimal_path=path_record, Disambiguate_state=D_record, LU_diff=LU_diff)
-      } else{
-        # run into obstacle
-        # update start to current disambiguation state
-        # subtract one disambiguation 
-        reach_t=F
-        s <- D_state
-        # determine which obstacle
-        obs_ind_temp <- which(Int_info[edge_ind_temp,]==1)
-        if (length(obs_ind_temp)==1){
-          W <- W - obs_info$cost[obs_ind_temp]
-          # add cost of disambiguation
-          cost_total <- cost_total+obs_info[obs_ind_temp,3]
-          if (obs_info$status[obs_ind_temp]==1){
-            # asjust based on true obstacle
-            df_edge_ed[which(Int_info[,obs_ind_temp]==1),3] <- Inf
-          } else{
-            # adjust based on false obstacle
-            df_edge_ed[which(Int_info[,obs_ind_temp]==1),3] <- df_edge_ed[which(Int_info[,obs_ind_temp]==1),3]+
-              0.5*alpha*log(1-obs_info[obs_ind_temp,4])
-            df_edge_ed[which(Int_info[,obs_ind_temp]==1),4] <- df_edge_ed[which(Int_info[,obs_ind_temp]==1),4]-
-              0.5*obs_info[obs_ind_temp,3]
-            Int_info[which(Int_info[,obs_ind_temp]==1),obs_ind_temp] <- 0
-          }
-        } else{
-          dist_temp <- rep(0,length(obs_ind_temp))
-          for(i in 1:length(obs_ind_temp)){
-            dist_temp[i] <- Dist_Euclidean(as.numeric(vertice_list[D_state,1:2]),obs_info[obs_ind_temp[i],1:2])
-          }
-          obs_ind_temp2 <- obs_ind_temp[which.min(dist_temp)]
-          W <- W-obs_info$cost[obs_ind_temp2]
-          # add cost of disambiguation
-          cost_total <- cost_total+obs_info[obs_ind_temp2,3]
-          if(obs_info$status[obs_ind_temp2]==1){
-            # true obstacle
-            df_edge_ed[which(Int_info[,obs_ind_temp2]==1),3] <- Inf
-          } else{
-            # false obstacle
-            df_edge_ed[which(Int_info[,obs_ind_temp2]==1),3] <- df_edge_ed[which(Int_info[,obs_ind_temp2]==1),3]+
-              0.5*alpha*log(1-obs_info[obs_ind_temp2,4])
-            df_edge_ed[which(Int_info[,obs_ind_temp2]==1),4] <- df_edge_ed[which(Int_info[,obs_ind_temp2]==1),4]-
-              0.5*obs_info[obs_ind_temp2,3]
-            Int_info[which(Int_info[,obs_ind_temp2]==1),obs_ind_temp2] <- 0
-          }
-        }
-        G_ed <- graph.data.frame(df_edge_ed,directed = F)
-      }
+  
+  output <- Simple_Node_Eliminate_modified2(G_ed, s, t, W)
+  if (length(output)==1){
+    output_final <- list(Optimal_found=F)
+    break
+  }
+  
+  if(output$Optimal_upper==T){
+    if (output$Step==1){
+      # if minimum cost path is optimal
+      P_optimal <- output$Info_path
+      V_list <- c(as.numeric(attributes(P_optimal$vpath[[1]])$names))
+      LU_diff <- c(LU_diff,(output$Value_upper-output$Value_lower)/output$Value_lower)
+    } else if(output$Step==3){
+      P_optimal <- output$Info_path
+      V_list <- c(as.numeric(attributes(P_optimal$vpath[[1]])$names))
+      LU_diff <- c(LU_diff,(output$Value_upper-output$Value_lower)/output$Value_lower)
     } else{
-      output_final <- list(Optimal_found=F)
+      # optimal found in the SNE process
+      P_optimal <- output$Info_path
+      V_list <- c(as.numeric(attributes(P_optimal$forward$vpath[[1]])$names),as.numeric(attributes(P_optimal$backward$vpath[[1]])$names)[-1])
+      LU_diff <- c(LU_diff,0)
     }
+    #follow the path until the first disambiguation state
+    for (i in 2:length(V_list)){
+      edge_ind_temp <- which(df_edge_ed$from==min(V_list[(i-1):i])&df_edge_ed$to==max(V_list[(i-1):i]))
+      edge_length <- Dist_Euclidean(as.numeric(vertice_list[V_list[i-1],1:2]),as.numeric(vertice_list[V_list[i],1:2]))
+      length_total <- length_total+edge_length
+      path_record <- c(path_record,V_list[i])
+      if (sum(Int_info[edge_ind_temp,])!=0){
+        D_state <- V_list[i-1]
+        D_record <- c(D_record, D_state)
+        obs_ind_temp <- which(Int_info[edge_ind_temp,]==1)
+        Obstacle_record <- unique(c(Obstacle_record, obs_ind_temp))
+      }
+    }
+    reach_t=T
+    cost_total <- sum(obs_info$cost[Obstacle_record])
+    output_final <- list(Optimal_found=T,Length_total=length_total,Cost_total=cost_total,
+                         Optimal_path=path_record, Disambiguate_state=D_record,LU_diff=LU_diff)
+  } else{
+    output_final <- list(Optimal_found=F)
   }
   return(output_final)
 }
 
+result_benchmark <- matrix(NA, ncol=3, nrow=100)
 
 
 
+write.csv(result_benchmark, file = file.path(output_dir, "result_benchmark_40_2.csv"))
 
-result_WCSPP_risk_30 <- matrix(NA,ncol=7,nrow=100)
-write.csv(result_WCSPP_risk_30, file = file.path(output_dir, paste0("result_WCSPP_risk_", alpha, "_80_1.csv")))
-for (i in 51:100){
-    obs_info_all_use <- obs_info_all[[i]]
-    result <- WCSPP_Node_risk_30(obs_info_all_use)
-    result_WCSPP_risk_30[i, 1] <- result$Length_total
-    result_WCSPP_risk_30[i,2] <- result$Cost_total
-    result_WCSPP_risk_30[i,3] <- length(result$Disambiguate_state)
-    result_WCSPP_risk_30[i,4] <- result$LU_diff[1]
-    result_WCSPP_risk_30[i,5] <- result$LU_diff[2]
-    result_WCSPP_risk_30[i,6] <- result$LU_diff[3]
-    result_WCSPP_risk_30[i,7] <- result$LU_diff[4]
-    write.csv(result_WCSPP_risk_30, file = file.path(output_dir, paste0("result_WCSPP_risk_", alpha, "_80_1.csv")))
-  }
-
-
+for(i in 1:100){
+  obs_info_all_use <- obs_info_all[[i]]
+  result <- WCSPP_benchmark(obs_info_all_use)
+  result_benchmark[i,1] <- result$Length_total
+  result_benchmark[i,2] <- result$Cost_total
+  result_benchmark[i,3] <- length(result$Disambiguate_state)
+  write.csv(result_benchmark, file = file.path(output_dir, "result_benchmark_40_2.csv"))
+}
 
 
