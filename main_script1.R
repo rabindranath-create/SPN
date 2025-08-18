@@ -680,9 +680,9 @@ write.csv(result_benchmark, file = file.path(output_dir, "result_benchmark_80_8.
 for(i in 1:25){
   obs_info_all_use <- obs_info_all[[i]]
   result <- WCSPP_benchmark(obs_info_all_use)
-  result_benchmark[i,1] <- result[[k]]$Length_total
-  result_benchmark[i,2] <- result[[k]]$Cost_total
-  result_benchmark[i,3] <- length(result[[k]]$Disambiguate_state)
+  result_benchmark[i,1] <- result$Length_total
+  result_benchmark[i,2] <- result$Cost_total
+  result_benchmark[i,3] <- length(result$Disambiguate_state)
   write.csv(result_benchmark, file = file.path(output_dir, "result_benchmark_80_8.csv"))
 }
 
