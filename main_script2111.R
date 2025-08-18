@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 cat("Working directory:", getwd(), "\n")
 # Set up and confirm output folder
-output_dir <- file.path(getwd(), "outputs/script21")
+output_dir <- file.path(getwd(), "outputs/script2111")
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 cat("Created directory:", output_dir, "\n")
 
@@ -676,7 +676,7 @@ result_benchmark <- matrix(NA, ncol=3, nrow=100)
 write.csv(result_benchmark, file = file.path(output_dir, "result_benchmark_80_10.csv"))
 
 
-for(i in 26:50){
+for(i in 76:100){
   obs_info_all_use <- obs_info_all[[i]]
   result <- WCSPP_benchmark(obs_info_all_use)
   result_benchmark[i,1] <- result[[k]]$Length_total
